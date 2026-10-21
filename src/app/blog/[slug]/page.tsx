@@ -1,11 +1,13 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
-import ReactMarkdown from "react-markdown";
+import { ArrowRight } from "lucide-react";
 
 const supabase = createClient(
-  process.env.SUPABASE_URL || "https://ltywtxqwuzhtovbqyaiv.supabase.co",
-  process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0eXd0eHF3dXpodG92YnF5YWl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk1NTU3OTEsImV4cCI6MjEwNTEzMTc5MX0.EnssZKc3C9AkkGgiI7MQdl8Xd8rW5fTX2gqRd2VM65I"
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "https://ltywtxqwuzhtovbqyaiv.supabase.co",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
 );
 
 interface BlogPost {
@@ -15,105 +17,226 @@ interface BlogPost {
   excerpt: string;
   content: string;
   category: string;
-  featured_image?: string; // Added to match your Supabase database column
-  created_at?: string;
+  author_name?: string;
   read_time?: string;
+  created_at?: string;
+  featured_image?: string; 
+  is_featured?: boolean;
 }
 
-async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  const decodedSlug = decodeURIComponent(slug).trim();
+export default function BlogPage() {
+  const [blogs, setBlogs] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(6);
 
-  let { data, error } = await supabase
-    .from("blogs")
-    .select("*")
-    .eq("slug", decodedSlug)
-    .single();
+  // Updated categories to match your agency services
+  const categories = ['All', 'Web Development', 'AI Automation', 'Performance Marketing', 'UI/UX Design', 'Company News'];
 
-  if (error || !data) {
-    const { data: fallbackData } = await supabase
-      .from("blogs")
-      .select("*")
-      .ilike("slug", `%${decodedSlug}%`)
-      .limit(1);
+  useEffect(() => {
+    async function fetchBlogs() {
+      const { data, error } = await supabase
+        .from("blogs")
+        .select("*")
+        .order("id", { ascending: false });
 
-    if (fallbackData && fallbackData.length > 0) {
-      data = fallbackData[0];
+      if (error) {
+        console.error("Error fetching blogs from Supabase:", error);
+      } else if (data) {
+        setBlogs(data);
+      }
+      setLoading(false);
     }
-  }
 
-  if (!data) {
-    return null;
-  }
+    fetchBlogs();
+  }, []);
 
-  return data;
-}
+  const handleCategoryChange = (cat: string) => {
+    setActiveCategory(cat);
+    setVisibleCount(6);
+  };
 
-export default async function BlogDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = await params;
-  const post = await getBlogPost(resolvedParams.slug);
+  const featuredPost = blogs.find(p => p.is_featured) || blogs[0];
+  const regularBlogs = blogs.filter(p => p.id !== featuredPost?.id);
 
-  if (!post) {
-    notFound();
-  }
+  const filteredBlogs = activeCategory === "All"
+    ? regularBlogs
+    : regularBlogs.filter(post => post.category?.trim().toLowerCase() === activeCategory.trim().toLowerCase());
+
+  const displayedBlogs = filteredBlogs.slice(0, visibleCount);
+  const hasMorePosts = visibleCount < filteredBlogs.length;
 
   return (
-    <main className="flex flex-col w-full bg-brand-light text-brand-dark py-20 px-4 sm:px-6 lg:px-8">
-      <article className="max-w-4xl mx-auto w-full bg-white p-8 md:p-12 border border-gray-200 rounded-sm shadow-sm">
-        
-        {/* Breadcrumb Navigation */}
-        <div className="mb-6 text-[11px] font-bold text-gray-500 uppercase tracking-widest">
-          <Link href="/" className="hover:text-brand-purple">Home</Link> <span className="text-brand-gold">›</span> <Link href="/blog" className="hover:text-brand-purple">Insights</Link> <span className="text-brand-gold">›</span> <span className="text-brand-purple truncate">{post.title}</span>
-        </div>
-
-        <span className="text-xs font-bold text-brand-gold uppercase tracking-widest block mb-3">
-          {post.category}
-        </span>
-        
-        <h1 className="text-3xl md:text-4xl font-serif font-bold text-brand-purple mb-4 leading-tight">
-          {post.title}
+    <div className="w-full flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen font-sans transition-colors duration-300">
+      
+      {/* 1. HEADER SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 md:pt-28 pb-12 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-[var(--text-primary)] mb-6">
+          Insights & <span className="text-[var(--accent-action)]">Strategies</span>
         </h1>
-        
-        <p className="text-gray-500 text-xs mb-6 pb-6 border-b border-gray-200 font-medium">
-          Published via E-Clearby Research Consulting
+        <p className="text-[var(--text-body)] max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
+          Expert perspectives on digital engineering, AI automation, and high-performance marketing. Build, scale, and innovate with Clearby Services.
         </p>
+      </section>
 
-        {/* Featured Image Banner */}
-        {post.featured_image && (
-          <div className="mb-10 w-full h-[350px] md:h-[450px] bg-gray-100 rounded-sm overflow-hidden border border-gray-200">
-            <img 
-              src={post.featured_image} 
-              alt={post.title} 
-              className="w-full h-full object-cover"
-            />
+      {/* 2. CATEGORY FILTER PILLS */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+        <div className="flex flex-wrap justify-center gap-3">
+          {categories.map((cat, idx) => {
+            const isActive = activeCategory === cat;
+            return (
+              <button
+                key={idx}
+                onClick={() => handleCategoryChange(cat)}
+                className={`px-6 py-2.5 text-xs md:text-sm font-bold border rounded-full transition-all duration-300 cursor-pointer ${
+                  isActive 
+                    ? 'bg-[var(--accent-action)] text-[var(--bg-primary)] border-[var(--accent-action)] shadow-md' 
+                    : 'bg-[var(--card-bg)] text-[var(--text-body)] border-[var(--border-color)] hover:border-[var(--accent-action)] hover:text-[var(--accent-action)] shadow-sm'
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 w-full space-y-16">
+        
+        {/* 3. FEATURED ARTICLE BANNER */}
+        {featuredPost && activeCategory === "All" && (
+          <div className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-3xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-500 grid grid-cols-1 lg:grid-cols-12 gap-0 items-stretch group cursor-pointer">
+            <div className="lg:col-span-7 bg-[var(--border-color)] min-h-[320px] relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10 duration-500"></div>
+              <img 
+                src={featuredPost.featured_image || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop"} 
+                alt={featuredPost.title}
+                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
+              />
+            </div>
+            <div className="lg:col-span-5 p-8 md:p-12 flex flex-col justify-between relative z-20">
+              <div>
+                <span className="inline-block bg-[var(--accent-action)]/10 text-[var(--accent-action)] text-[10px] font-bold tracking-widest px-3 py-1.5 rounded-full mb-6 uppercase">
+                  Featured Insight
+                </span>
+                <h2 className="text-2xl md:text-4xl font-bold text-[var(--text-primary)] mb-4 leading-tight group-hover:text-[var(--accent-action)] transition-colors">
+                  {featuredPost.title}
+                </h2>
+                <p className="text-sm md:text-base text-[var(--text-body)] leading-relaxed mb-8">
+                  {featuredPost.excerpt}
+                </p>
+              </div>
+              <div className="flex items-center justify-between border-t border-[var(--border-color)] pt-6 text-xs text-[var(--text-body)] font-medium">
+                <span>
+                  {featuredPost.created_at ? new Date(featuredPost.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "Oct 24, 2026"} 
+                  <span className="mx-2 opacity-50">•</span> 
+                  {featuredPost.read_time || "8 min read"}
+                </span>
+                <Link href={`/blog/${featuredPost.slug}`} className="font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-action)] uppercase tracking-wider transition-colors flex items-center gap-1.5">
+                  Read Article <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Render content using ReactMarkdown with custom styling classes */}
-        <div className="prose prose-purple max-w-none text-sm text-gray-700 leading-relaxed space-y-4">
-          <ReactMarkdown
-            components={{
-              h2: ({node, ...props}) => <h2 className="text-2xl font-serif font-bold text-brand-purple mt-8 mb-4" {...props} />,
-              h3: ({node, ...props}) => <h3 className="text-xl font-serif font-bold text-brand-purple mt-6 mb-3" {...props} />,
-              p: ({node, ...props}) => <p className="mb-4 leading-relaxed" {...props} />,
-              ul: ({node, ...props}) => <ul className="list-disc pl-5 space-y-2 mb-4" {...props} />,
-              li: ({node, ...props}) => <li className="text-gray-700" {...props} />,
-            }}
-          >
-            {post.content}
-          </ReactMarkdown>
-        </div>
+        {/* 4. BLOG GRID CARDS */}
+        {loading ? (
+          <div className="text-center py-20 text-[var(--text-body)] font-bold animate-pulse text-sm">Loading insights...</div>
+        ) : filteredBlogs.length === 0 ? (
+          <div className="text-center py-20 text-[var(--text-body)] font-medium text-sm border border-[var(--border-color)] rounded-2xl bg-[var(--card-bg)]">
+            No blog posts found for this category.
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {displayedBlogs.map((post, idx) => (
+                <Link 
+                  key={post.id || idx} 
+                  href={`/blog/${post.slug}`}
+                  className="bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-[var(--accent-action)] transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+                >
+                  <div>
+                    <div className="h-56 bg-[var(--border-color)] overflow-hidden relative">
+                      <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors z-10 duration-500"></div>
+                      <img 
+                        src={post.featured_image || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop"} 
+                        alt={post.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                      />
+                    </div>
+                    <div className="p-6 md:p-8">
+                      <span className="text-[10px] font-bold text-[var(--accent-action)] tracking-widest mb-3 uppercase block">
+                        {post.category || "General"}
+                      </span>
+                      <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 leading-tight line-clamp-2 group-hover:text-[var(--accent-action)] transition-colors">
+                        {post.title}
+                      </h3>
+                      <p className="text-sm text-[var(--text-body)] mb-6 leading-relaxed line-clamp-3">
+                        {post.excerpt}
+                      </p>
+                    </div>
+                  </div>
 
-        {/* Bottom Back Button */}
-        <div className="mt-16 pt-8 border-t border-gray-200 flex justify-between items-center">
-          <Link 
-            href="/blog" 
-            className="bg-brand-purple text-white font-bold py-3.5 px-8 rounded-sm hover:bg-brand-purple/90 transition text-xs uppercase tracking-wider shadow-sm"
-          >
-            ← Back to All Insights
-          </Link>
-        </div>
+                  <div className="px-6 pb-6 pt-0 mt-auto md:px-8 md:pb-8">
+                    <div className="border-t border-[var(--border-color)] pt-5 flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-[var(--accent-action)]/10 text-[var(--accent-action)] flex items-center justify-center font-bold text-[10px]">
+                          {(post.author_name || "C")[0]}
+                        </div>
+                        <span className="font-bold text-[var(--text-primary)]">{post.author_name || "Clearby Team"}</span>
+                      </div>
+                      <span className="text-[var(--accent-action)] transform group-hover:translate-x-1 transition-transform inline-flex items-center">
+                        <ArrowRight className="w-4 h-4" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
 
-      </article>
-    </main>
+            {/* LOAD MORE BUTTON */}
+            {hasMorePosts && (
+              <div className="flex justify-center mt-16">
+                <button 
+                  onClick={() => setVisibleCount(prev => prev + 6)}
+                  className="border-2 border-[var(--accent-action)] text-[var(--accent-action)] font-bold py-3.5 px-8 rounded-lg hover:bg-[var(--accent-action)] hover:text-[var(--bg-primary)] transition-all duration-300 text-sm tracking-wider uppercase"
+                >
+                  Load More Insights
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* 5. NEWSLETTER CTA (Premium dark-block aesthetic) */}
+      <div className="pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        <section className="w-full bg-[var(--text-primary)] text-[var(--bg-primary)] rounded-3xl py-16 px-8 sm:px-12 lg:px-16 shadow-2xl relative overflow-hidden">
+          {/* Decorative background aura */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--accent-action)] opacity-20 blur-[100px] rounded-full pointer-events-none"></div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center relative z-10">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Stay Ahead in Tech & Growth</h2>
+              <p className="text-[var(--bg-primary)]/70 text-sm md:text-base leading-relaxed max-w-md">
+                Join thousands of founders and executives. Get our monthly editorial on engineering, AI workflows, and scaling strategies.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 w-full ml-auto">
+              <input 
+                type="email" 
+                placeholder="Enter your email address" 
+                className="w-full bg-[var(--bg-primary)]/10 border border-[var(--bg-primary)]/20 px-5 py-4 text-sm text-[var(--bg-primary)] placeholder-[var(--bg-primary)]/50 focus:outline-none focus:border-[var(--accent-action)] focus:ring-1 focus:ring-[var(--accent-action)] rounded-xl transition-all"
+              />
+              <button className="bg-[var(--accent-action)] text-[var(--bg-primary)] font-bold py-4 px-8 rounded-xl hover:opacity-90 transition-opacity whitespace-nowrap text-sm shadow-lg">
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </div>
   );
 }

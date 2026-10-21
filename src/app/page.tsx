@@ -1,133 +1,247 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import ContactForm from "@/components/ContactForm";
 import { LampContainer } from "@/components/ui/lamp";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import NumberTicker from "@/components/NumberTicker";
 
 export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const router = useRouter();
 
+  const typewriterWords = [
+    "Web Experiences",
+    "Mobile Apps",
+    "AI Solutions",
+    "Blockchain dApps",
+    "Performance Marketing"
+  ];
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentText, setCurrentText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(130);
+
+  useEffect(() => {
+    const fullText = typewriterWords[currentWordIndex];
+
+    const handleTyping = () => {
+      if (!isDeleting) {
+        setCurrentText(fullText.substring(0, currentText.length + 1));
+        if (currentText === fullText) {
+          setTimeout(() => setIsDeleting(true), 2000);
+          setTypingSpeed(80);
+        }
+      } else {
+        setCurrentText(fullText.substring(0, currentText.length - 1));
+        if (currentText === "") {
+          setIsDeleting(false);
+          setCurrentWordIndex((prev) => (prev + 1) % typewriterWords.length);
+          setTypingSpeed(130);
+        }
+      }
+    };
+
+    const timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, currentWordIndex, typingSpeed]);
+
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
 
-  const categories = [
-    "All",
-    "PhD",
-    "Master's",
-    "Research & Publication",
-    "Data Analysis",
-    "Implementation / Simulation",
-    "Academic Support"
-  ];
-
-  const servicesList = [
-    { title: "Topic Consultation", desc: "Help select and refine your research topic", category: "PhD", action: "Consult", link: "/services/phd-topic-consultation", icon: "💡" },
-    { title: "Proposal Development", desc: "Develop compelling research proposals", category: "PhD", action: "Get Help", link: "/services/research-proposal-development", icon: "📄" },
-    { title: "Literature Review", desc: "Comprehensive review of existing research and knowledge gaps", category: "PhD", action: "Learn More", link: "/services/literature-review-writing-service", icon: "📖" },
-    { title: "Research Manuscript Development", desc: "Help select and refine your research", category: "Research & Publication", action: "Consult", link: "/services/research-paper-support", icon: "📑" },
-    { title: "Data Analysis", desc: "Support for quantitative/qualitative analysis", category: "Data Analysis", action: "Learn More", link: "/services/phd-thesis-data-analysis-service", icon: "📊" },
-    { title: "Expert Implementation", desc: "Hands-on support for implementation", category: "Implementation / Simulation", action: "Consult", link: "/services/software-implementation-help-for-phd-research", icon: "⚙️" },
-    { title: "Thesis & Dissertation Writing", desc: "Comprehensive structural and writing support", category: "PhD", action: "Consult", link: "/services/phd-thesis-writing-services", icon: "✍️" },
-    { title: "Explore our services", desc: "Browse our complete catalog of 40+ academic support services", category: "All", action: "Explore", link: "/services", icon: "📖" },
-  ];
-
-  const facultyList = [
+  const coreServices = [
     {
-      name: "Dr. Ramkrishnan Raman",
-      title: "PhD in Quantative Analysis, Stanford University",
-      experience: "14+ Years Academic Experience",
-      specs: ["Qualitative Research Design", "Literature Synthesis & Analysis", "Theoretical Framework Development"],
+      title: "Development",
+      tagline: "Build. Scale. Dominate.",
+      desc: "Websites, web applications and mobile apps, built to scale with your business.",
+      link: "/services",
+      disciplines: ["Web Development", "Mobile App Development", "AI & Machine Learning", "Cloud & DevOps", "Cybersecurity"]
     },
     {
-      name: "Dr. Veena Ganeshan",
-      title: "PhD in Methodology Design, Oxford University",
-      experience: "12+ Years Research Experience",
-      specs: ["Mixed-Methods Integration", "Longitudinal Study Design", "Ethical Compliance Review"],
+      title: "Digital Marketing",
+      tagline: "Grow. Engage. Convert.",
+      desc: "Search, paid, social and creator marketing, measured on what it returns, including SEO, AEO & GEO.",
+      link: "/services",
+      disciplines: ["SEO, AEO & GEO", "Performance Marketing", "Social Media Management", "Influencer Marketing"]
     },
     {
-      name: "Dr. Yogesh Kotkar",
-      title: "PhD in Literature Review, Harvard University",
-      experience: "15+ Years Editorial Experience",
-      specs: ["Systematic Review Protocols", "Critical Discourse Analysis", "Narrative Synthesis"],
+      title: "Blockchain & Web3",
+      tagline: "The Future Is Decentralized.",
+      desc: "Decentralized applications, smart contracts and digital asset platforms, audited for security.",
+      link: "/services",
+      disciplines: ["Smart Contracts", "dApps", "NFT Platforms", "Security Audits"]
     },
+    {
+      title: "Designing",
+      tagline: "Design That Gets Remembered.",
+      desc: "From the logo up: brand identity, interface design and everyday marketing collateral.",
+      link: "/services",
+      disciplines: ["UI/UX Design", "Brand Identity & Logo Design", "Graphic Design", "Website Design"]
+    }
   ];
 
   return (
-    <main className="flex flex-col w-full bg-brand-light text-brand-dark overflow-x-hidden">
+    <main className="flex flex-col w-full bg-[var(--bg-primary)] text-[var(--text-body)] overflow-x-hidden font-sans transition-colors duration-300 min-h-screen">
       
-      {/* 1. HERO SECTION */}
-      <section className="w-full bg-brand-purple text-white py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Left Hero Text */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="lg:col-span-7"
-          >
-            <span className="text-brand-gold text-xs font-bold tracking-widest mb-4 block">
-              | PhD RESEARCH GUIDANCE
-            </span>
-            <h1 className="text-3xl md:text-xl lg:text-5xl font-serif font-bold leading-tight mb-6">
-              PhD Research Guidance from Expert Consultants: From Topic Consultation to Successful Thesis Defence
-            </h1>
-            <p className="text-gray-300 text-base md:text-lg mb-8 leading-relaxed max-w-2xl">
-              Get personalized coaching at every stage of your doctoral research. Our PhD consultants provide expert feedback, strategic guidance, and proven methodologies to help you complete your research work with confidence. You drive the research—we guide you to excellence.
-            </p>
+      <style jsx global>{`
+        /* Dynamic gradient that automatically uses your CSS variables via color-mix */
+        .landing-hero {
+          position: relative;
+          background: radial-gradient(ellipse 80% 60% at 50% -10%, color-mix(in srgb, var(--text-primary) 5%, transparent) 0%, color-mix(in srgb, var(--text-primary) 2%, transparent) 50%, transparent 100%), var(--bg-primary);
+        }
 
-            {/* Checkmark Features 2x3 Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-6 text-xs md:text-sm text-brand-gold mb-10 font-medium">
-              <div className="flex items-center gap-2">✓ END-TO-END PhD GUIDANCE</div>
-              <div className="flex items-center gap-2">✓ EXPERT REVIEW & REFINEMENT</div>
-              <div className="flex items-center gap-2">✓ ONE-TO-ONE EXPERT CONSULTATION</div>
-              <div className="flex items-center gap-2">✓ THESIS DEFENCE PREPARATION</div>
-              <div className="flex items-center gap-2">✓ PUBLICATION & JOURNAL GUIDANCE</div>
-              <div className="flex items-center gap-2">✓ CONFIDENTIAL & PROFESSIONAL SERVICE</div>
+        .typewriter-cursor {
+          display: inline-block;
+          width: 2.5px;
+          height: 1.1em;
+          background-color: var(--accent-action);
+          margin-left: 2px;
+          animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
+
+      {/* 1. HERO SECTION */}
+      <section className="landing-hero py-24 sm:py-32 overflow-hidden flex items-center min-h-[90vh] relative">
+        {/* Ambient background glows */}
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-[var(--accent-action)]/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-72 h-72 bg-[var(--text-primary)]/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
+          
+          {/* LEFT COLUMN: Typography & CTAs */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="lg:col-span-7 flex flex-col items-start"
+          >
+            {/* Soft translucent pill */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--text-primary)]/5 border border-[var(--border-color)] text-[var(--text-primary)] mb-8 shadow-sm backdrop-blur-md">
+              <span className="flex h-2 w-2 rounded-full bg-[var(--accent-action)] animate-pulse"></span>
+              <span className="text-[10px] font-bold uppercase tracking-widest opacity-90">
+                Comprehensive Tech & Digital Marketing
+              </span>
             </div>
 
-            {/* Hero CTA Buttons with Hover Scale & Shadow */}
-            <div className="flex flex-wrap gap-4 items-center mb-6">
-              <motion.a 
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] mb-6 text-[var(--text-primary)]">
+              Transform Your <br className="hidden sm:block" />
+              <span className="bg-gradient-to-r from-[var(--text-primary)] to-[var(--accent-action)] bg-clip-text text-transparent italic pr-2">Digital Future,</span><br/>
+              <span className="inline-block min-w-[20px]">{currentText}</span>
+              <span className="typewriter-cursor"></span>
+            </h1>
+
+            <p className="text-[var(--text-body)] text-base md:text-lg mb-10 max-w-xl leading-relaxed opacity-90 font-medium">
+              Your trusted partner for <strong>Web & Mobile Apps</strong>, <strong>Blockchain & AI</strong>, and expert <strong>Performance Marketing</strong>.
+            </p>
+
+            <div className="flex flex-wrap gap-4 items-center mb-12 w-full">
+              <Link 
                 href="/contact" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="bg-brand-purple border border-white/30 text-white font-bold py-3.5 px-8 rounded-sm hover:bg-white/10 transition shadow-lg text-sm"
+                className="bg-[var(--accent-action)] text-[var(--bg-primary)] font-bold py-4 px-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:opacity-90 hover:scale-[1.02] hover:-translate-y-0.5 transition-all duration-300 text-sm flex items-center gap-2 group"
               >
-                Schedule Free Consultation
-              </motion.a>
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-                <Link href="/services" className="inline-block bg-white text-brand-purple border border-white font-bold py-3.5 px-8 rounded-sm hover:bg-gray-100 transition shadow-lg text-sm">
-                  Explore Our Services
-                </Link>
-              </motion.div>
+                <span>Get Free Consultation</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link 
+                href="/services" 
+                className="bg-[var(--text-primary)]/5 hover:bg-[var(--text-primary)]/10 border border-[var(--border-color)] text-[var(--text-primary)] font-bold py-4 px-8 rounded-2xl transition-all duration-300 text-sm backdrop-blur-sm shadow-sm"
+              >
+                Explore Services
+              </Link>
+            </div>
+
+            {/* Trust Indicator */}
+            <div className="flex items-center gap-4 bg-[var(--text-primary)]/5 px-6 py-4 rounded-2xl border border-[var(--border-color)] backdrop-blur-sm">
+              <div className="flex -space-x-3">
+                {[12, 32, 44].map((id, index) => (
+                  <img key={index} src={`https://i.pravatar.cc/150?u=${id}`} alt="Client" className="w-8 h-8 rounded-full border-2 border-[var(--bg-primary)]" />
+                ))}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider mb-0.5">Trusted by 50+ Brands</span>
+                <span className="text-[11px] text-[var(--text-body)] opacity-80">Accepting new projects this month.</span>
+              </div>
             </div>
           </motion.div>
 
-          {/* Right Hero Form Card */}
+          {/* RIGHT COLUMN: Floating Logo Centerpiece */}
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="lg:col-span-5"
+            transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+            className="lg:col-span-5 relative flex justify-center items-center w-full mt-12 lg:mt-0 h-full min-h-[400px]"
           >
-            <ContactForm variant="hero" />
+            {/* Inner Floating Animation */}
+            <motion.div 
+              animate={{ y: [-15, 15, -15] }} 
+              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+              className="relative z-20 flex items-center justify-center w-full max-w-sm lg:max-w-md aspect-square group"
+            >
+              {/* Outer decorative ring */}
+              <div className="absolute inset-0 rounded-full border border-[var(--accent-action)]/20 animate-[spin_10s_linear_infinite]"></div>
+              <div className="absolute inset-4 rounded-full border border-[var(--text-primary)]/10 animate-[spin_15s_linear_infinite_reverse]"></div>
+              
+              {/* Main Glassmorphic Logo Container */}
+              <div className="relative w-3/4 h-3/4 bg-[var(--bg-primary)]/40 rounded-full p-12 border border-[var(--border-color)] backdrop-blur-xl shadow-2xl flex items-center justify-center overflow-hidden group-hover:border-[var(--accent-action)]/50 transition-colors duration-500">
+                
+                {/* Subtle inner glow */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-[var(--accent-action)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                {/* LIGHT MODE LOGO (Hides instantly when .dark is present) */}
+                <img 
+                  src="/light-favcon.png" 
+                  alt="Clearby Services" 
+                  className="w-full h-full object-contain drop-shadow-xl relative z-10 transform group-hover:scale-110 transition-transform duration-500 block dark:hidden [.dark_&]:hidden" 
+                />
+                
+                {/* DARK MODE LOGO (Shows instantly when .dark is present) */}
+                <img 
+                  src="/dark-favcon.png" 
+                  alt="Clearby Services" 
+                  className="w-full h-full object-contain drop-shadow-xl relative z-10 transform group-hover:scale-110 transition-transform duration-500 hidden dark:block [.dark_&]:block" 
+                />
+              </div>
+
+              {/* Floating Decorative Badges (Tech Stack / Services) */}
+              <motion.div 
+                animate={{ y: [-5, 5, -5] }} 
+                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut", delay: 1 }}
+                className="absolute top-10 -right-4 bg-[var(--card-bg)] border border-[var(--border-color)] px-4 py-2 rounded-xl shadow-lg backdrop-blur-md"
+              >
+                <span className="text-xs font-bold text-[var(--text-primary)]">🚀 Web3 Ready</span>
+              </motion.div>
+
+              <motion.div 
+                animate={{ y: [5, -5, 5] }} 
+                transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 2 }}
+                className="absolute bottom-16 -left-8 bg-[var(--card-bg)] border border-[var(--border-color)] px-4 py-2 rounded-xl shadow-lg backdrop-blur-md"
+              >
+                <span className="text-xs font-bold text-[var(--accent-action)]">AI Automation</span>
+              </motion.div>
+
+            </motion.div>
           </motion.div>
 
         </div>
       </section>
 
       {/* 2. STATS BAR */}
-      <section className="w-full bg-[#24133A] text-white py-12 border-t border-b border-brand-gold/30">
+      <section className="w-full bg-[var(--text-primary)]/5 text-[var(--text-primary)] py-16 border-y border-[var(--border-color)] transition-colors backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[{ num: "11+", label: "Years Experience" }, { num: "7853+", label: "Researchers Served" }, { num: "11300+", label: "Happy Clients" }, { num: "401+", label: "Qualified Experts" }].map((stat, idx) => (
+          {[
+            { value: 80, suffix: "+", label: "Projects Delivered", decimals: 0 },
+            { value: 50, suffix: "+", label: "Clients Worldwide", decimals: 0 },
+            { value: 4.9, suffix: "", label: "Client Rating", decimals: 1 },
+            { value: 24, suffix: " hrs", label: "Response Time", decimals: 0 }
+          ].map((stat, idx) => (
             <motion.div 
               key={idx}
               initial={{ opacity: 0, y: 20 }}
@@ -135,58 +249,66 @@ export default function HomePage() {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
             >
-              <h3 className="text-4xl md:text-5xl font-serif font-bold text-brand-gold mb-1">{stat.num}</h3>
-              <p className="text-xs uppercase tracking-widest text-gray-300 font-medium">{stat.label}</p>
+              <h3 className="text-4xl md:text-6xl font-bold tracking-tight text-[var(--text-primary)] mb-2">
+                {/* Ticker Replaces Static Number */}
+                <NumberTicker 
+                  value={stat.value} 
+                  suffix={stat.suffix} 
+                  decimals={stat.decimals}
+                  delay={idx * 0.15} // Staggers the counting start time
+                />
+              </h3>
+              <p className="text-xs uppercase tracking-widest text-[var(--text-body)] opacity-80 font-bold">
+                {stat.label}
+              </p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* 3. SERVICES GRID */}
-      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-brand-light">
-        <div className="max-w-7xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-brand-purple mb-3">
-            PhD Research Consultation, Thesis & Dissertation Coaching Services
+      {/* 3. CORE SERVICES GRID */}
+      <section className="w-full py-24 px-4 sm:px-6 lg:px-8 bg-[var(--bg-primary)] transition-colors">
+        <div className="max-w-7xl mx-auto text-center mb-16">
+          <span className="text-xs font-bold text-[var(--accent-action)] tracking-widest uppercase mb-3 block">WHAT WE DO</span>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[var(--text-primary)] mb-4">
+            Powerful solutions we create
           </h2>
-          <p className="text-gray-600 text-sm">Structured guidance across every phase of your research journey.</p>
+          <p className="text-[var(--text-body)] text-base md:text-lg max-w-2xl mx-auto leading-relaxed">From MVPs to enterprise platforms, here is what we are equipped to build. Each project is customized to your exact requirements.</p>
         </div>
 
-        {/* Category Filter Pills - Redirects to /services with query params */}
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-center items-center gap-3 mb-16">
-          {categories.map((cat, idx) => (
-            <button
-              key={idx}
-              onClick={() => {
-                if (cat === "All") {
-                  router.push('/services');
-                } else {
-                  router.push(`/services?category=${encodeURIComponent(cat)}`);
-                }
-              }}
-              className="px-5 py-2.5 rounded-full text-xs font-semibold transition-all duration-300 border bg-white text-gray-700 border-gray-300 hover:border-brand-purple hover:text-brand-purple hover:scale-105"
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {servicesList.map((srv, idx) => (
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          {coreServices.map((srv, idx) => (
             <motion.div 
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.05 }}
-              whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              className="bg-white p-8 border border-gray-200 shadow-sm hover:shadow-xl transition rounded-sm flex flex-col justify-between"
+              className="bg-[var(--text-primary)]/5 backdrop-blur-sm p-8 md:p-10 border border-[var(--border-color)] shadow-sm hover:shadow-xl hover:border-[var(--accent-action)] transition-all duration-300 rounded-3xl flex flex-col justify-between group"
             >
               <div>
-                <h3 className="text-xl font-serif font-bold text-brand-purple mb-3">{srv.title}</h3>
-                <p className="text-xs text-gray-600 mb-6 leading-relaxed">{srv.desc}</p>
+                <div className="flex justify-between items-center mb-6">
+                  <span className="text-xs font-bold text-[var(--accent-action)] tracking-widest uppercase bg-[var(--accent-action)]/10 px-3 py-1 rounded-full">
+                    0{idx + 1} / {srv.title}
+                  </span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--accent-action)] transition-colors">{srv.title}</h3>
+                <p className="text-sm md:text-base text-[var(--text-primary)] font-bold mb-4">{srv.tagline}</p>
+                <p className="text-sm text-[var(--text-body)] opacity-90 mb-8 leading-relaxed">{srv.desc}</p>
+                
+                <div className="border-t border-[var(--border-color)] pt-6 mb-8">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-body)] mb-3">Key Disciplines:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {srv.disciplines.map((disc, dIdx) => (
+                      <span key={dIdx} className="text-xs font-medium bg-[var(--bg-primary)] border border-[var(--border-color)] px-4 py-1.5 rounded-full text-[var(--text-body)] shadow-sm">
+                        {disc}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <Link href={srv.link || "/services"} className="text-xs font-bold text-brand-gold uppercase tracking-wider hover:text-brand-purple transition inline-flex items-center gap-1 group">
-                {srv.action} <span className="transition-transform group-hover:translate-x-1">→</span>
+              <Link href={srv.link} className="text-xs font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-action)] uppercase tracking-wider transition-colors inline-flex items-center gap-2 mt-auto">
+                Explore {srv.title} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
           ))}
@@ -194,26 +316,29 @@ export default function HomePage() {
       </section>
 
       {/* 4. WHY CHOOSE US */}
-      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="w-full py-24 px-4 sm:px-6 lg:px-8 bg-[var(--text-primary)]/5 border-y border-[var(--border-color)] transition-colors">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-brand-purple mb-8 leading-tight">
-              Why Choose E-Clearby Research for Your PhD Research Guidance
+            <span className="text-xs font-bold text-[var(--accent-action)] tracking-widest uppercase mb-3 block">WHY CHOOSE US</span>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[var(--text-primary)] mb-8 leading-tight">
+              Why Businesses Choose Clearby Services
             </h2>
-            <div className="space-y-6 text-base md:text-lg text-gray-700">
+            <div className="space-y-6 text-base md:text-lg text-[var(--text-body)]">
               {[
-                "Expert PhD Thesis Consultants with 11+ Years of Experience",
-                "Academic Integrity-First Approach to Thesis Guidance",
-                "Personalized PhD Thesis Coaching for Your Unique Research",
-                "Affordable Dissertation Consultation Services",
-                "Fast-Track PhD Completion with Strategic Guidance"
+                "Modern Tech Expertise: React, Next.js, Node, Python & Blockchain",
+                "Competitive Pricing: Premium quality with transparent cost structures",
+                "Fast Delivery: Agile sprints and weekly progress updates",
+                "Dedicated Support: Direct access to developers, no middlemen"
               ].map((item, i) => (
-                <div key={i} className="border-b border-gray-200 pb-5 flex items-center gap-3.5 transition-colors hover:text-brand-purple font-medium">
-                  <span className="text-brand-gold font-bold text-xl">✓</span> {item}
+                <div key={i} className="border-b border-[var(--border-color)] pb-5 flex items-start gap-4 transition-colors hover:text-[var(--accent-action)] font-medium group">
+                  <div className="bg-[var(--accent-action)]/10 p-1 rounded-full shrink-0 group-hover:bg-[var(--accent-action)] transition-colors mt-0.5">
+                     <CheckCircle2 className="w-5 h-5 text-[var(--accent-action)] group-hover:text-[var(--bg-primary)]" />
+                  </div>
+                  <span>{item}</span>
                 </div>
               ))}
             </div>
@@ -222,268 +347,144 @@ export default function HomePage() {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="bg-white p-4 border border-gray-200 shadow-sm rounded-sm"
+            className="bg-[var(--bg-primary)] p-4 border border-[var(--border-color)] shadow-xl rounded-3xl overflow-hidden group"
           >
-            <img src="Why-Choose.png" alt="Clearby Research Why-Choose" className="w-full h-auto object-cover" />
+            <img src="/Why-Choose.png" alt="Clearby Services Why Choose Us" className="w-full h-auto object-cover rounded-2xl filter grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
           </motion.div>
         </div>
       </section>
 
       {/* 5. ABOUT COMPANY */}
-      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-brand-light">
+      <section className="w-full py-24 px-4 sm:px-6 lg:px-8 bg-[var(--bg-primary)] transition-colors">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="bg-white p-4 border border-gray-200 shadow-sm rounded-sm">
-            <img src="About.png" alt="Clearby Research About" className="w-full h-auto object-cover" />
+          <div className="bg-[var(--text-primary)]/5 p-4 border border-[var(--border-color)] shadow-xl rounded-3xl overflow-hidden group order-2 lg:order-1">
+            <img src="/About.png" alt="Clearby Services About" className="w-full h-auto object-cover rounded-2xl filter grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" />
           </div>
-          <div>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-brand-purple mb-6 leading-tight">
-              About E-Clearby Research Consulting Pvt Ltd
+          <div className="order-1 lg:order-2">
+            <span className="text-xs font-bold text-[var(--accent-action)] tracking-widest uppercase mb-3 block">ABOUT CLEARBY SERVICES</span>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[var(--text-primary)] mb-6 leading-tight">
+              Digital Engineering & Growth Partner
             </h2>
-            <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-6">
-              In the world of academia, research is the foundation upon which knowledge is built and innovations are forged. However, the path to successful research — especially at advanced levels such as PhDs — can be an arduous and intricate journey. This is where E-Clearby Research Consulting Pvt. Ltd. emerges as a beacon of expertise and support, dedicated to guiding scholars toward academic excellence.
+            <p className="text-[var(--text-body)] text-base md:text-lg leading-relaxed mb-6">
+              Clearby Services is a full-service digital agency delivering high-performance web development, mobile apps, AI automation, and performance marketing. We combine technical rigor with strategic marketing to build products that drive measurable business growth.
             </p>
-            <p className="text-gray-700 text-base md:text-lg leading-relaxed">
-              As trusted PhD Topics Consultants, we help you select a research direction that is original and achievable; through expert guidance in Thesis Writing, we support you in structuring and strengthening your own work chapter by chapter.
+            <p className="text-[var(--text-body)] text-base md:text-lg leading-relaxed">
+              From planning through launch and ongoing optimization, our team works closely with you via weekly progress updates and live staging environments.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 6. OUR PROMISES & RESEARCH ETHICS */}
-      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      {/* 6. HOW WE WORK (4-STEP PROCESS) */}
+      <section className="w-full py-24 px-4 sm:px-6 lg:px-8 bg-[var(--text-primary)]/5 border-t border-[var(--border-color)] transition-colors">
         <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-brand-purple mb-2">Our Promises & Research Ethics Commitment</h2>
-          <div className="w-20 h-0.5 bg-brand-gold mx-auto mt-3"></div>
-        </div>
-        
-       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-  <div className="lg:col-span-7 space-y-8 text-gray-700"> {/* Increased vertical space between items */}
-    {[
-      { title: "1. Academic Integrity is Non-Negotiable:", desc: "All guidance maintains university plagiarism standards. No shortcuts, no academic dishonesty. Your work represents your authentic research." },
-      { title: "2. You Maintain Full Authorship:", desc: "You write your thesis; we provide feedback. We never write for you or submit work in your name. Your intellectual contributions remain 100% yours." },
-      { title: "3. Our Role is Advisory Only:", desc: "We guide your thinking, not replace it. We coach you to do better work, not do it for you. We're like having an expert mentor, not a co-author." },
-      { title: "4. Transparent Process:", desc: "Clear expectations from day one. What we will and won't do, spelled out. Regular check-ins to ensure alignment with your goals." },
-      { title: "5. University Compliance:", desc: "We follow all university guidelines. Our services don't violate academic policies. We prepare students for legitimate academic success." }
-    ].map((promise, i) => (
-      <div key={i} className="flex items-start gap-4 pb-6 border-b border-gray-200"> {/* Increased gap for larger font alignment */}
-        <span className="text-brand-gold text-xl mt-0.5 shrink-0">✓</span> {/* Increased checkmark size */}
-        <div>
-          {/* Increased title font size from default to text-lg */}
-          <p className="font-bold text-brand-purple text-lg mb-1.5">{promise.title}</p>
-          {/* Increased description font size from text-xs to text-sm */}
-          <p className="text-sm text-gray-600 leading-relaxed">{promise.desc}</p>
-        </div>
-      </div>
-    ))}
-  </div>
-
-  <div className="lg:col-span-5 bg-white p-3 border border-gray-200 shadow-sm rounded-sm">
-    <img src="/Promises.png" alt="Clearby Research Promises" className="w-full h-auto object-cover rounded-sm" />
-  </div>
-</div>
-      </section>
-
-      {/* 7. 8-STAGE GUIDANCE PROCESS */}
-      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-brand-light">
-        <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-brand-purple mb-3">Our PhD Research Guidance Process</h2>
-          <p className="text-gray-600 text-sm">A rigorous, step-by-step methodology designed to ensure academic excellence and research integrity.</p>
+          <span className="text-xs font-bold text-[var(--accent-action)] tracking-widest uppercase mb-3 block">PROCESS</span>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[var(--text-primary)] mb-4">How a project moves</h2>
+          <p className="text-[var(--text-body)] text-base md:text-lg max-w-2xl mx-auto">Four steps, weekly progress updates and a live staging environment.</p>
         </div>
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
-            { step: "01", title: "PLACE YOUR ENQUIRY", desc: "Share your research requirements, university guidelines, and current progress with our team." },
-            { step: "02", title: "EXPERT CONSULTATION", desc: "One-on-one discussion with a research expert to evaluate requirements and challenges." },
-            { step: "03", title: "CUSTOM WORK PLAN", desc: "Prepare a milestone-based research roadmap with chapter-wise deliverables." },
-            { step: "04", title: "FLEXIBLE INSTALLMENT", desc: "Discuss and get a customized payment schedule with transparent milestone options." },
-            { step: "05", title: "PAYMENT & CONFIRMATION", desc: "Approve the proposed work plan and complete the initial payment securely." },
-            { step: "06", title: "PROJECT EXECUTION", desc: "Dedicated experts begin work with regular progress updates at every milestone." },
-            { step: "07", title: "WORK DELIVERY", desc: "Receive completed deliverables as per the agreed timeline for your review." },
-            { step: "08", title: "REVISION & FINALIZATION", desc: "Submit revision requests based on feedback until final successful submission." },
+            { step: "01", title: "Discovery & Strategy", desc: "Requirements gathering, market research, and timeline planning." },
+            { step: "02", title: "Design & Prototype", desc: "UI/UX wireframes, interactive mockups, and system design." },
+            { step: "03", title: "Development & Testing", desc: "Clean typed code, sprint updates, automated testing, and QA." },
+            { step: "04", title: "Launch & Support", desc: "Deployment setup, performance optimization, and 3 months free support." },
           ].map((st, idx) => (
             <motion.div 
               key={idx}
               whileHover={{ scale: 1.02 }}
-              className="bg-white p-6 border border-gray-200 rounded-sm relative flex flex-col justify-between shadow-sm hover:shadow-md transition"
+              className="bg-[var(--bg-primary)] p-8 border border-[var(--border-color)] rounded-3xl relative flex flex-col justify-between shadow-sm hover:shadow-xl hover:border-[var(--accent-action)] transition-all duration-300"
             >
               <div>
-                <span className="text-3xl font-serif font-bold text-brand-gold/40 absolute top-4 right-4">{st.step}</span>
-                <span className="text-[10px] font-bold text-brand-gold tracking-widest block mb-1">STAGE {idx + 1}</span>
-                <h3 className="text-lg font-serif font-bold text-brand-purple mb-3">{st.title}</h3>
-                <p className="text-xs text-gray-600 leading-relaxed">{st.desc}</p>
+                <span className="text-5xl font-bold text-[var(--text-primary)]/5 absolute top-6 right-6 select-none">{st.step}</span>
+                <span className="text-[10px] font-bold text-[var(--accent-action)] tracking-widest block mb-4">STAGE {idx + 1}</span>
+                <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 relative z-10">{st.title}</h3>
+                <p className="text-sm text-[var(--text-body)] leading-relaxed relative z-10">{st.desc}</p>
               </div>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* 8. ELITE RESEARCH FACULTY */}
-      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-brand-purple mb-3">Elite Research Faculty</h2>
-          <div className="w-20 h-0.5 bg-brand-gold mx-auto mb-4"></div>
-          <p className="text-gray-600 text-xs md:text-sm max-w-2xl mx-auto">
-            Our consultants are not just advisors; they are seasoned researchers, peer-reviewers, and academic pioneers with decades of cumulative experience in the ivory tower.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          {facultyList.map((fac, idx) => (
-            <motion.div 
-              key={idx}
-              whileHover={{ y: -5 }}
-              className="bg-brand-light p-8 border border-gray-200 rounded-sm text-center shadow-sm hover:shadow-md transition"
-            >
-              <div className="w-20 h-20 bg-white border border-brand-gold/30 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden shadow-sm">
-                <img src="/Faculty.png" alt="Faculty" className="w-full h-full object-cover" />
-              </div>
-              <h3 className="text-xl font-serif font-bold text-brand-purple mb-1">{fac.name}</h3>
-              <p className="text-xs text-brand-gold font-bold mb-3">{fac.title}</p>
-              <p className="text-xs text-gray-500 mb-6 font-medium">{fac.experience}</p>
-              
-              <div className="border-t border-gray-200 pt-4 text-left">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Credentials:</p>
-                <p className="text-xs text-gray-700 mb-3 font-medium">{fac.title}</p>
-                
-                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Specializations:</p>
-                <ul className="space-y-1 text-xs text-gray-700">
-                  {fac.specs.map((s, i) => <li key={i}>✓ {s}</li>)}
-                </ul>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* 9. ACADEMIC SUBJECTS */}
-      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-brand-light">
-        <div className="max-w-7xl mx-auto mb-16 flex flex-col items-center text-center">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-brand-purple mb-4">
-            PhD Research Guidance Across Academic Disciplines
+      {/* 7. FREQUENTLY ASKED QUESTIONS */}
+      <section className="w-full py-24 px-4 sm:px-6 lg:px-8 bg-[var(--bg-primary)] transition-colors">
+        <div className="max-w-3xl mx-auto">
+          {/* Header */}
+          <span className="text-xs font-bold text-[var(--accent-action)] tracking-widest uppercase mb-3 block text-center">FAQ</span>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-[var(--text-primary)] text-center mb-16">
+            Frequently Asked Questions
           </h2>
-          <div className="w-24 h-0.5 bg-brand-gold mx-auto mb-6"></div>
-          <p className="text-gray-600 text-sm md:text-base max-w-4xl mx-auto leading-relaxed">
-            We provide ethical research guidance, consultation, and academic support to doctoral scholars and researchers across a wide range of disciplines—from business and engineering to health sciences, social sciences, life sciences, humanities, and technology.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-12">
-          {[
-            { 
-              title: "Business, Management & Commerce", 
-              items: ["Business Administration", "Marketing", "Finance & Accounting", "Human Resource Management", "Organizational Behavior", "Economics"] 
-            },
-            { 
-              title: "Engineering & Technology", 
-              items: ["Civil Engineering", "Mechanical Engineering", "Electrical Engineering", "Electronics & Communication", "Chemical Engineering", "Robotics & Automation"] 
-            },
-            { 
-              title: "Computer Science, Data & AI", 
-              items: ["Computer Science", "Information Technology", "Data Science", "Artificial Intelligence & Machine Learning", "Cybersecurity", "Information Systems"] 
-            },
-            { 
-              title: "Medical, Nursing & Allied Health", 
-              items: ["Medicine", "Nursing", "Public Health", "Pharmacy", "Physiotherapy", "Biomedical Sciences"] 
-            },
-            { 
-              title: "Life Sciences & Biotechnology", 
-              items: ["Biotechnology", "Microbiology", "Biochemistry", "Genetics", "Molecular Biology", "Bioinformatics"] 
-            },
-            { 
-              title: "Science & Environment", 
-              items: ["Mathematics", "Statistics", "Physics", "Chemistry", "Environmental Science", "Sustainable Development"] 
-            },
-            { 
-              title: "Social Sciences & Education", 
-              items: ["Psychology", "Sociology", "Economics", "Political Science", "Education", "Social Work"] 
-            },
-            { 
-              title: "Humanities, Languages & Literature", 
-              items: ["English Literature", "History", "Philosophy", "Linguistics", "Languages", "Cultural Studies"] 
-            },
-            { 
-              title: "Law, Policy & Governance", 
-              items: ["Law", "Public Administration", "Public Policy", "Governance", "Criminology", "International Relations"] 
-            }
-          ].map((col, idx) => (
-            <div key={idx}>
-              <h4 className="font-serif font-bold text-brand-purple mb-4 uppercase tracking-wider text-sm md:text-base">
-                {col.title}
-              </h4>
-              <ul className="space-y-3 text-gray-700 text-sm">
-                {col.items.map((item, i) => (
-                  <li key={i} className="hover:text-brand-purple transition-colors">· {item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gray-200 text-sm italic text-gray-600 text-center">
-          Can't find your discipline? We work across 40+ academic fields. <Link href="/contact" className="text-brand-gold font-semibold not-italic hover:underline">Contact us</Link> to discuss your specialized area.
-        </div>
-      </section>
-
-      {/* 10. FREQUENTLY ASKED QUESTIONS */}
-      <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-serif font-bold text-brand-purple text-center mb-12">Frequently Asked Questions</h2>
-          <div className="space-y-4">
+          
+          {/* Minimalist Accordion List */}
+          <div className="space-y-2">
             {[
               {
-                q: "What's the difference between Clearby's 'guidance' and 'writing services'?",
-                a: "We coach you to do better work; we don't do the work for you. You maintain full authorship, stay engaged with your research, and develop skills you'll use throughout your career. Writing services do the opposite."
+                q: "What services does Clearby Services provide?",
+                a: "Clearby Services provides full-service IT solutions including web and mobile app development, AI & machine learning, blockchain & web3, cloud DevOps, cybersecurity, and digital marketing."
               },
               {
-                q: "Will my thesis be approved?",
-                a: "We can't guarantee approval—that's your professor's decision. But our guidance significantly improves approval likelihood. 92% of our clients' theses are approved on first submission. Our role is to make your research as strong as possible."
+                q: "What is your typical project timeline?",
+                a: "Timelines depend on scope and complexity. We break every project into sprints with demo checkpoints so you see real progress throughout via live staging environments."
               },
               {
-                q: "How much does PhD thesis consultation cost?",
-                a: "Services range from $100-300 per hour depending on discipline and consultant expertise. Many students budget $2K-5K total for full-thesis guidance (vs. $10K-15K for writing services). First consultation is free."
+                q: "Does Clearby Services offer post-launch support?",
+                a: "Yes, every project includes a complimentary three-month post-launch support window covering bug fixes, minor adjustments, and performance monitoring."
               },
               {
-                q: "Can you help if I'm already partially through my thesis?",
-                a: "Absolutely. Many students engage us mid-journey when they're stuck. We can jump in at any stage—topic, proposal, methodology, data analysis, or chapter revision. There's no penalty for joining mid-stream."
-              },
-              {
-                q: "How is this different from working with my academic advisor?",
-                a: "Your advisor oversees your research. We specialize in coaching the writing, methodology, and research skills. Many students work with both—their advisor ensures academic fit; we ensure quality execution."
-              },
-              {
-                q: "Do you work with students from outside India?",
-                a: "Yes. We serve doctoral scholars from 20+ countries across multiple time zones. Our flexible, asynchronous model works for international students. Language support available for non-native English speakers."
-              },
-              {
-                q: "Is this actually ethical?",
-                a: "Yes. University guidelines permit consultants who provide guidance and feedback on student work. What's not permitted is completing work for students, submitting work under their name, or plagiarism. We do none of those things."
-              },
-              {
-                q: "How quickly will I see results?",
-                a: "Depends on your starting point. Most students report clarity improvements within 2-3 consultations. Thesis timeline improvements vary: 1-3 months for topic/proposal clarity; 2-6 months for methodology validation; 3-12 months for full-thesis improvement."
+                q: "How do I get started?",
+                a: "Simply schedule a free consultation or fill out our project enquiry form. We'll discuss your goals and provide a detailed proposal within 24 hours."
               }
             ].map((faq, idx) => (
-              <div key={idx} className="border border-gray-200 rounded-sm bg-brand-light overflow-hidden transition-all">
-                <button onClick={() => toggleFaq(idx)} className="w-full px-6 py-4 text-left font-serif font-bold text-brand-purple flex justify-between items-center text-sm">
-                  <span>{faq.q}</span>
-                  <span className="text-brand-gold">{openFaq === idx ? "▲" : "▼"}</span>
+              <div 
+                key={idx} 
+                className="border-b border-[var(--border-color)] last:border-b-0 group"
+              >
+                <button 
+                  onClick={() => toggleFaq(idx)} 
+                  className="w-full py-6 text-left flex justify-between items-center cursor-pointer"
+                  aria-expanded={openFaq === idx}
+                >
+                  <span className={`text-lg font-medium transition-colors duration-300 pr-8 ${openFaq === idx ? "text-[var(--accent-action)]" : "text-[var(--text-primary)] group-hover:text-[var(--accent-action)]"}`}>
+                    {faq.q}
+                  </span>
+                  
+                  {/* Animated + / - Icon */}
+                  <div className="relative w-4 h-4 flex items-center justify-center shrink-0">
+                    {/* Horizontal Line (Always stays flat) */}
+                    <span 
+                      className={`absolute w-full h-[2px] rounded-full transition-colors duration-300 ${
+                        openFaq === idx ? "bg-[var(--accent-action)]" : "bg-[var(--text-body)] group-hover:bg-[var(--accent-action)]"
+                      }`}
+                    ></span>
+                    
+                    {/* Vertical Line (Rotates 90 degrees to form a minus sign when open) */}
+                    <span 
+                      className={`absolute w-full h-[2px] rounded-full transition-all duration-300 ${
+                        openFaq === idx 
+                          ? "bg-[var(--accent-action)] rotate-0" 
+                          : "bg-[var(--text-body)] rotate-90 group-hover:bg-[var(--accent-action)]"
+                      }`}
+                    ></span>
+                  </div>
                 </button>
-                {openFaq === idx && (
-                  <motion.div 
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    className="px-6 pb-4 text-xs text-gray-600 leading-relaxed border-t border-gray-200 pt-3"
-                  >
+                
+                {/* Smooth Expandable Answer */}
+                <div 
+                  className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                    openFaq === idx ? "max-h-96 opacity-100 pb-6" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <p className="text-base text-[var(--text-body)] leading-relaxed pr-8">
                     {faq.a}
-                  </motion.div>
-                )}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
-
-      {/* 11. FINAL BOTTOM CTA BANNER WITH LAMP EFFECT */}
+      
+      {/* 8. FINAL BOTTOM CTA BANNER WITH LAMP EFFECT */}
       <LampContainer>
         <motion.div 
           initial={{ opacity: 0.5, y: 100 }}
@@ -493,36 +494,32 @@ export default function HomePage() {
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="text-center max-w-4xl mx-auto px-4"
+          className="text-center max-w-4xl mx-auto px-4 relative z-50"
         >
-          <span className="text-xs font-bold text-white tracking-widest uppercase block mb-3">
-            Ready to Start Your PhD Thesis Guidance Journey?
+          {/* Note: Keeping explicit white text here because the Lamp Container creates a dark glowing background internally */}
+          <span className="text-xs font-bold text-white/70 tracking-widest uppercase block mb-4">
+            Get in touch
           </span>
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-white mb-6">
-            Take the Next Step Toward Thesis Success
+          <h2 className="text-4xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
+            Lets build something together
           </h2>
-          <p className="text-gray-300 text-sm max-w-2xl mx-auto mb-10 leading-relaxed">
-            Join 500+ doctoral scholars who accelerated their research with expert guidance. Your first consultation is free—no obligation, no sales pressure. Just expert advice tailored to your situation.
+          <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            Tell us about your project. Free consultation, no obligation, and a reply within 24 hours.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <a 
+            <Link 
               href="/contact" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="bg-brand-gold text-brand-purple font-bold py-3.5 px-8 rounded-sm hover:opacity-90 transition text-sm shadow-lg"
+              className="bg-[var(--accent-action)] text-[var(--bg-primary)] font-bold py-4 px-10 rounded-full hover:opacity-90 transition-opacity text-sm shadow-[0_0_20px_rgba(2,132,199,0.4)] flex items-center gap-2 group"
             >
-              Schedule Your Free Consultation
-            </a>
+              Get Free Consultation <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
             <Link 
               href="/services" 
-              className="border border-white/30 text-white font-bold py-3.5 px-8 rounded-sm hover:bg-white/10 transition text-sm"
+              className="border border-white/30 text-white font-bold py-4 px-10 rounded-full hover:bg-white/10 transition-colors text-sm backdrop-blur-sm"
             >
               Explore Services
             </Link>
           </div>
-          <p className="text-xs text-brand-gold font-medium tracking-wide">
-            ✓ 92% OF OUR CLIENTS' THESES ARE APPROVED ON FIRST SUBMISSION
-          </p>
         </motion.div>
       </LampContainer>
 

@@ -35,9 +35,10 @@ export default function BackToTop() {
     <button
       onClick={scrollToTop}
       aria-label="Back to top"
-      className="fixed bottom-6 right-6 z-50 bg-brand-purple text-white p-3.5 rounded-sm shadow-xl border border-brand-gold/40 hover:bg-brand-purple/90 hover:border-brand-gold hover:-translate-y-1 transition-all duration-300 focus:outline-none group cursor-pointer"
+      style={{ backgroundColor: 'var(--card-bg)' }}
+      className="fixed bottom-6 right-6 z-50 p-3.5 rounded-xl shadow-2xl border border-[var(--border-color)] hover:border-[var(--accent-action)] hover:-translate-y-1 transition-all duration-300 focus:outline-none group cursor-pointer"
     >
-      <ArrowUp className="w-5 h-5 text-brand-gold group-hover:scale-125 transition-transform duration-300" />
+      <ArrowUp className="w-5 h-5 text-[var(--accent-action)] group-hover:scale-125 transition-transform duration-300" />
     </button>
   );
 }

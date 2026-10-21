@@ -92,26 +92,30 @@ export default function ContactForm({ variant = "hero" }: ContactFormProps) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Hero Variant Layout (Single Column Stack - used in Home & Landing pages)
+  // -----------------------------------------------------------
+  // 1. HERO VARIANT (Used on Home/Landing pages)
+  // -----------------------------------------------------------
   if (variant === "hero") {
     return (
-      <div className="bg-white text-brand-dark p-8 rounded-sm shadow-2xl relative">
-        <h3 className="text-2xl font-serif font-bold mb-1">Get Expert Guidance</h3>
-        <p className="text-xs text-gray-500 mb-6">Start your journey to a successful PhD today.</p>
+      <div className="bg-[var(--text-primary)]/5 backdrop-blur-md border border-[var(--border-color)] text-[var(--text-primary)] p-8 rounded-2xl shadow-sm relative hover:border-[var(--accent-action)] transition-colors duration-300">
+        <h3 className="text-2xl font-bold mb-1">Get Expert Guidance</h3>
+        <p className="text-xs text-[var(--text-body)] mb-6">Start your journey to a successful project today.</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Name</label>
-            <input required type="text" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-brand-purple rounded-sm placeholder-gray-400 bg-white" />
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-1">Name</label>
+            <input required type="text" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" 
+              className="w-full border border-[var(--border-color)] px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-action)] focus:ring-1 focus:ring-[var(--accent-action)] rounded-lg placeholder-[var(--text-body)]/40 bg-transparent text-[var(--text-primary)] transition-all" />
           </div>
+          
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Phone Number</label>
-            <div className="flex">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-2">Phone Number</label>
+            <div className="flex group focus-within:ring-1 focus-within:ring-[var(--accent-action)] rounded-lg">
               <select 
                 name="countryCode" 
                 value={formData.countryCode} 
                 onChange={handleChange}
-                className="border border-r-0 border-gray-300 bg-gray-50 text-gray-700 text-xs sm:text-sm rounded-l-sm font-medium px-2 py-3 focus:outline-none focus:border-brand-purple"
+                className="border border-r-0 border-[var(--border-color)] bg-[var(--text-primary)]/10 text-[var(--text-primary)] text-xs sm:text-sm rounded-l-lg font-medium px-2 py-3 focus:outline-none focus:border-[var(--accent-action)] transition-all"
               >
                 <option value="+91">🇮🇳 +91</option>
                 <option value="+44">🇬🇧 +44</option>
@@ -119,30 +123,38 @@ export default function ContactForm({ variant = "hero" }: ContactFormProps) {
                 <option value="+61">🇦🇺 +61</option>
                 <option value="+971">🇦🇪 +971</option>
               </select>
-              <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="7020112146" className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-brand-purple rounded-r-sm placeholder-gray-400 bg-white" />
+              <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="7020112146" 
+                className="w-full border border-[var(--border-color)] px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-action)] rounded-r-lg placeholder-[var(--text-body)]/40 bg-transparent text-[var(--text-primary)] transition-all" />
             </div>
           </div>
+
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Email</label>
-            <input required type="email" name="email" value={formData.email} onChange={handleChange} placeholder="j.doe@university.edu" className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-brand-purple rounded-sm placeholder-gray-400 bg-white" />
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-1">Email</label>
+            <input required type="email" name="email" value={formData.email} onChange={handleChange} placeholder="j.doe@company.com" 
+              className="w-full border border-[var(--border-color)] px-4 py-3 text-sm focus:outline-none focus:border-[var(--accent-action)] focus:ring-1 focus:ring-[var(--accent-action)] rounded-lg placeholder-[var(--text-body)]/40 bg-transparent text-[var(--text-primary)] transition-all" />
           </div>
+
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Select Services</label>
-            <select name="service" value={formData.service} onChange={handleChange} className="w-full border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-brand-purple rounded-sm bg-white text-gray-700">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-1">Select Services</label>
+            <select name="service" value={formData.service} onChange={handleChange} 
+              className="w-full border border-[var(--border-color)] px-3 py-3 text-sm focus:outline-none focus:border-[var(--accent-action)] focus:ring-1 focus:ring-[var(--accent-action)] rounded-lg bg-transparent text-[var(--text-primary)] transition-all [&>option]:bg-[var(--bg-primary)]">
               <option value="" disabled>Select a service...</option>
               {subMenuOptions.map((option, index) => (
-                <option key={index} value={option}>
-                  {option}
-                </option>
+                <option key={index} value={option}>{option}</option>
               ))}
             </select>
           </div>
+
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">Message</label>
-            <textarea required name="message" value={formData.message} onChange={handleChange} rows={3} placeholder="Tell us about your research..." className="w-full border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-brand-purple rounded-sm resize-none placeholder-gray-400 bg-white"></textarea>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-1">Message</label>
+            <textarea required name="message" value={formData.message} onChange={handleChange} rows={3} placeholder="Tell us about your requirements..." 
+              className="w-full border border-[var(--border-color)] px-3 py-3 text-sm focus:outline-none focus:border-[var(--accent-action)] focus:ring-1 focus:ring-[var(--accent-action)] rounded-lg resize-none placeholder-[var(--text-body)]/40 bg-transparent text-[var(--text-primary)] transition-all"></textarea>
           </div>
+
           {status === "error" && <p className="text-red-500 text-xs">Failed to send. Please try again.</p>}
-          <button type="submit" disabled={status === "loading"} className="w-full bg-brand-purple text-white font-bold py-3 text-sm hover:bg-opacity-90 transition rounded-sm shadow-md">
+          
+          <button type="submit" disabled={status === "loading"} 
+            className="w-full bg-[var(--accent-action)] text-[var(--bg-primary)] font-bold py-3.5 text-sm hover:opacity-90 transition-opacity rounded-lg shadow-md disabled:opacity-70 mt-2">
             {status === "loading" ? "SUBMITTING..." : "SUBMIT REQUEST"}
           </button>
         </form>
@@ -150,30 +162,35 @@ export default function ContactForm({ variant = "hero" }: ContactFormProps) {
     );
   }
 
-  // Contact Page Variant Layout (Multi-column grid design)
+  // -----------------------------------------------------------
+  // 2. CONTACT PAGE VARIANT (Blends smoothly into theme containers)
+  // -----------------------------------------------------------
   return (
-    <div className="bg-white p-8 md:p-10 border border-gray-200 shadow-sm rounded-sm">
+    <div className="w-full">
       <form onSubmit={handleSubmit} className="space-y-6">
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Full Name</label>
-            <input required type="text" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-brand-purple rounded-sm placeholder-gray-400 bg-white" />
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-2">Full Name</label>
+            <input required type="text" name="name" value={formData.name} onChange={handleChange} placeholder="John Doe" 
+              className="w-full border border-[var(--border-color)] px-4 py-3.5 text-sm focus:outline-none focus:border-[var(--accent-action)] focus:ring-1 focus:ring-[var(--accent-action)] rounded-lg placeholder-[var(--text-body)]/40 bg-transparent text-[var(--text-primary)] transition-all" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Email Address</label>
-            <input required type="email" name="email" value={formData.email} onChange={handleChange} placeholder="j.doe@university.edu" className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-brand-purple rounded-sm placeholder-gray-400 bg-white" />
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-2">Email Address</label>
+            <input required type="email" name="email" value={formData.email} onChange={handleChange} placeholder="j.doe@company.com" 
+              className="w-full border border-[var(--border-color)] px-4 py-3.5 text-sm focus:outline-none focus:border-[var(--accent-action)] focus:ring-1 focus:ring-[var(--accent-action)] rounded-lg placeholder-[var(--text-body)]/40 bg-transparent text-[var(--text-primary)] transition-all" />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Phone Number</label>
-            <div className="flex">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-2">Phone Number</label>
+            <div className="flex group focus-within:ring-1 focus-within:ring-[var(--accent-action)] rounded-lg transition-all">
               <select 
                 name="countryCode" 
                 value={formData.countryCode} 
                 onChange={handleChange}
-                className="border border-r-0 border-gray-300 bg-gray-50 text-gray-700 text-sm rounded-l-sm font-medium px-3 py-3 focus:outline-none focus:border-brand-purple"
+                className="border border-r-0 border-[var(--border-color)] bg-[var(--text-primary)]/5 text-[var(--text-primary)] text-sm rounded-l-lg font-medium px-3 py-3.5 focus:outline-none focus:border-[var(--accent-action)] transition-all"
               >
                 <option value="+91">🇮🇳 +91</option>
                 <option value="+44">🇬🇧 +44</option>
@@ -181,39 +198,34 @@ export default function ContactForm({ variant = "hero" }: ContactFormProps) {
                 <option value="+61">🇦🇺 +61</option>
                 <option value="+971">🇦🇪 +971</option>
               </select>
-              <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="7020112146" className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-brand-purple rounded-r-sm placeholder-gray-400 bg-white" />
+              <input required type="tel" name="phone" value={formData.phone} onChange={handleChange} placeholder="7020112146" 
+                className="w-full border border-[var(--border-color)] px-4 py-3.5 text-sm focus:outline-none focus:border-[var(--accent-action)] rounded-r-lg placeholder-[var(--text-body)]/40 bg-transparent text-[var(--text-primary)] transition-all" />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Enquiry Service</label>
-            <select name="service" value={formData.service} onChange={handleChange} className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-brand-purple rounded-sm bg-white text-gray-700">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-2">Enquiry Service</label>
+            <select name="service" value={formData.service} onChange={handleChange} 
+              className="w-full border border-[var(--border-color)] px-4 py-3.5 text-sm focus:outline-none focus:border-[var(--accent-action)] focus:ring-1 focus:ring-[var(--accent-action)] rounded-lg bg-transparent text-[var(--text-primary)] transition-all [&>option]:bg-[var(--bg-primary)]">
               {subMenuOptions.map((option, index) => (
-                <option key={index} value={option}>
-                  {option}
-                </option>
+                <option key={index} value={option}>{option}</option>
               ))}
             </select>
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">Research Brief / Message</label>
-          <textarea required name="message" value={formData.message} onChange={handleChange} rows={5} placeholder="Describe your research requirements..." className="w-full border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-brand-purple rounded-sm resize-none placeholder-gray-400 bg-white"></textarea>
+          <label className="block text-xs font-bold uppercase tracking-wider text-[var(--text-body)] mb-2">Research Brief / Message</label>
+          <textarea required name="message" value={formData.message} onChange={handleChange} rows={5} placeholder="Describe your project requirements..." 
+            className="w-full border border-[var(--border-color)] px-4 py-3.5 text-sm focus:outline-none focus:border-[var(--accent-action)] focus:ring-1 focus:ring-[var(--accent-action)] rounded-lg resize-none placeholder-[var(--text-body)]/40 bg-transparent text-[var(--text-primary)] transition-all"></textarea>
         </div>
 
-        {status === "error" && <p className="text-red-500 text-xs">Failed to send enquiry. Please try again.</p>}
+        {status === "error" && <p className="text-red-500 text-xs font-medium">Failed to send enquiry. Please try again.</p>}
 
-        <button type="submit" disabled={status === "loading"} className="bg-brand-purple text-white font-bold py-3.5 px-8 hover:bg-opacity-90 transition rounded-sm shadow-md text-xs uppercase tracking-wider disabled:opacity-70">
+        <button type="submit" disabled={status === "loading"} 
+          className="bg-[var(--accent-action)] text-[var(--bg-primary)] font-bold py-4 px-8 hover:opacity-90 transition-colors rounded-lg shadow-md text-xs uppercase tracking-wider disabled:opacity-70 mt-2">
           {status === "loading" ? "SUBMITTING..." : "SUBMIT ENQUIRY"}
         </button>
       </form>
-
-      {/* Trust Badges */}
-      <div className="mt-10 pt-6 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-semibold text-gray-700">
-        <div className="flex items-center gap-2"><span className="text-brand-gold text-base">🛡</span> Strictly Confidential</div>
-        <div className="flex items-center gap-2"><span className="text-brand-gold text-base">⚡</span> 24-Hour Response</div>
-        <div className="flex items-center gap-2"><span className="text-brand-gold text-base">✓</span> No-Obligation Quote</div>
-      </div>
     </div>
   );
 }

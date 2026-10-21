@@ -1,0 +1,161 @@
+Here are four distinct global CSS themes you can drop directly into your `globals.css` file to instantly change the look of your entire site.
+
+### Option 1: Midnight & Cyan (Modern Tech)
+
+A sleek, high-contrast palette perfect for SaaS, tech, and modern digital agencies.
+
+```css
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #F8FAFC;      /* Slate 50 */
+    --text-primary: #0F172A;    /* Slate 900 */
+    --text-body: #334155;       /* Slate 700 */
+    --card-bg: #FFFFFF;         /* Pure White */
+    --border-color: #E2E8F0;    /* Slate 200 */
+    --accent-action: #0284C7;   /* Bright Ocean Blue */
+  }
+
+  .dark {
+    --bg-primary: #0F172A;      /* Slate 900 */
+    --text-primary: #F8FAFC;    /* Slate 50 */
+    --text-body: #CBD5E1;       /* Slate 300 */
+    --card-bg: #1E293B;         /* Slate 800 */
+    --border-color: #334155;    /* Slate 700 */
+    --accent-action: #38BDF8;   /* Electric Cyan */
+  }
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-body);
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+```
+
+### Option 2: Sage & Terracotta (Earthy & Organic)
+
+A calming, grounded palette that feels warm, professional, and approachable.
+
+```css
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #F4F5F0;      /* Soft Oat */
+    --text-primary: #2C3D2E;    /* Deep Forest Green */
+    --text-body: #4A5D4E;       /* Muted Moss */
+    --card-bg: #FFFFFF;         /* Pure White */
+    --border-color: #E3E5D9;    /* Light Sage Border */
+    --accent-action: #D96C4E;   /* Terracotta Clay */
+  }
+
+  .dark {
+    --bg-primary: #2C3D2E;      /* Deep Forest Green */
+    --text-primary: #F4F5F0;    /* Soft Oat */
+    --text-body: #D0D6CD;       /* Light Moss */
+    --card-bg: #3A4F3D;         /* Medium Forest Panel */
+    --border-color: #4A634E;    /* Muted Green Border */
+    --accent-action: #E58A70;   /* Bright Terracotta */
+  }
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-body);
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+```
+
+### Option 3: Onyx & Gold (Luxury & Corporate)
+
+A highly professional, premium aesthetic that relies on stark contrasts and a rich gold accent.
+
+```css
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #FAFAFA;      /* Off-White */
+    --text-primary: #171717;    /* Jet Black */
+    --text-body: #525252;       /* Medium Charcoal */
+    --card-bg: #FFFFFF;         /* Pure White */
+    --border-color: #E5E5E5;    /* Light Gray */
+    --accent-action: #B8860B;   /* Dark Goldenrod */
+  }
+
+  .dark {
+    --bg-primary: #171717;      /* Jet Black */
+    --text-primary: #FAFAFA;    /* Off-White */
+    --text-body: #A3A3A3;       /* Light Gray */
+    --card-bg: #262626;         /* Dark Charcoal */
+    --border-color: #404040;    /* Medium Charcoal */
+    --accent-action: #D4AF37;   /* Bright Metallic Gold */
+  }
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-body);
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+```
+
+### Option 4: Amethyst & Lime (Bold & Creative)
+
+A vibrant, slightly playful palette designed to stand out, perfect for creative agencies and bold brands.
+
+```css
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #F5F3FF;      /* Light Lilac */
+    --text-primary: #2E1065;    /* Deep Eggplant */
+    --text-body: #5B21B6;       /* Vibrant Violet */
+    --card-bg: #FFFFFF;         /* Pure White */
+    --border-color: #EDE9FE;    /* Soft Lavender Border */
+    --accent-action: #10B981;   /* Emerald Green */
+  }
+
+  .dark {
+    --bg-primary: #2E1065;      /* Deep Eggplant */
+    --text-primary: #F5F3FF;    /* Light Lilac */
+    --text-body: #DDD6FE;       /* Soft Lavender */
+    --card-bg: #4C1D95;         /* Medium Purple */
+    --border-color: #5B21B6;    /* Vibrant Violet Border */
+    --accent-action: #34D399;   /* Bright Mint/Lime */
+  }
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-body);
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+```

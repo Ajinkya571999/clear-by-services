@@ -18,8 +18,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Clearby Research | PhD Research Guidance",
-  description: "Premier academic advisory firm for PhD and Master's students.",
+  title: "Clearby Services | Digital Engineering & Growth Agency",
+  description: "Trusted IT partner for Web & Mobile Development, Blockchain, AI Solutions, and expert Digital Marketing Services.",
 };
 
 export default function RootLayout({
@@ -30,10 +30,29 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${playfair.variable} h-full antialiased`}
+      className={`${inter.variable} ${playfair.variable} h-full antialiased dark`}
+      suppressHydrationWarning={true}
     >
+      <head>
+        {/* Use a standard HTML script tag to safely inject the theme handler without React/Turbopack warnings */}
+        <script
+          id="theme-switcher-init"
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem("theme");
+                if (theme === "light") {
+                  document.documentElement.classList.remove("dark");
+                } else {
+                  document.documentElement.classList.add("dark");
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body 
-        className="min-h-full flex flex-col bg-brand-light text-brand-dark font-sans"
+        className="min-h-full flex flex-col bg-[var(--bg-primary)] text-[var(--text-body)] transition-colors duration-300"
         suppressHydrationWarning={true}
       >
         <Header />

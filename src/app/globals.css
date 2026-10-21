@@ -1,31 +1,33 @@
 @import "tailwindcss";
 
-:root {
-  --background: #F8F9FA; /* Brand Light */
-  --foreground: #1A1A1A; /* Brand Dark */
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  
-  /* Clearby Research Brand Colors */
-  --color-brand-purple: #2E1A47;
-  --color-brand-gold: #B89047;
-  --color-brand-light: #F8F9FA;
-  --color-brand-dark: #1A1A1A;
-
-  /* Typography mapped from layout.tsx */
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-playfair);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    /* Optional dark mode defaults */
-    --background: #1A1A1A;
-    --foreground: #F8F9FA;
+    --bg-primary: #F8FAFC;      /* Slate 50 */
+    --text-primary: #0F172A;    /* Slate 900 */
+    --text-body: #334155;       /* Slate 700 */
+    --card-bg: #FFFFFF;         /* Pure White */
+    --border-color: #E2E8F0;    /* Slate 200 */
+    --accent-action: #0284C7;   /* Bright Ocean Blue */
+  }
+
+  .dark {
+    --bg-primary: #0F172A;      /* Slate 900 */
+    --text-primary: #F8FAFC;    /* Slate 50 */
+    --text-body: #CBD5E1;       /* Slate 300 */
+    --card-bg: #1E293B;         /* Slate 800 */
+    --border-color: #334155;    /* Slate 700 */
+    --accent-action: #38BDF8;   /* Electric Cyan */
   }
 }
 
-/* We removed the body{} block here because your layout.tsx handles the background and font-family using Tailwind classes */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-body);
+  font-family: var(--font-inter), sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-family: var(--font-playfair), serif;
+}
